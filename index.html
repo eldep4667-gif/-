@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS Trading Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+  <div class="page-bg"></div>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+  <div class="ambient ambient-c"></div>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">N</div>
+        <div>
+          <div class="brand-title">NEXUS</div>
+          <div class="brand-subtitle">Trading Intelligence</div>
+        </div>
+      </div>
+      <nav class="topnav">
+        <button class="topnav-link active" data-page="dashboard">المنصة</button>
+        <button class="topnav-link" data-page="news">الأخبار</button>
+        <button class="topnav-link" data-page="chart">الشارت</button>
+      </nav>
+      <div class="status-chip">Live Workspace</div>
+    </header>
+
+    <section class="hero-panel">
+      <div class="hero-art">
+        <div class="leaf-card leaf-main"></div>
+        <div class="leaf-card leaf-small leaf-small-top"></div>
+        <div class="leaf-card leaf-small leaf-small-bottom"></div>
+        <div class="leaf-highlight"></div>
+      </div>
+      <div class="hero-copy">
+        <div class="eyebrow">INSTITUTIONAL TRADING WORKSPACE</div>
+        <h1>Precision Trading Intelligence</h1>
+        <div class="hero-kicker">Live charting. Strategy-grade analysis. Market-moving news.</div>
+        <p>لوحة تداول احترافية تركّز على الأهم: شارت مباشر، تحليل مبني على المدارس والاستراتيجيات، ومكتب أخبار اقتصادي يوضح قوة الخبر وتأثيره على الزوج قبل الدخول في الصفقة.</p>
+        <div class="hero-tags">
+          <span id="heroSymbol">{{ default_symbol }}</span>
+          <span id="heroInterval">{{ default_interval }}</span>
+          <span id="heroMode">Smart AI</span>
+          <span>Live Market Structure</span>
+          <span>Strategy Confluence</span>
+          <span>Economic News Desk</span>
+        </div>
+      </div>
+      <div class="hero-summary">
+        <div class="summary-card">
+          <span>Session Clock</span>
+          <strong>{{ generated_at }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>News Bias</span>
+          <strong id="newsBiasValue">Neutral</strong>
+        </div>
+        <div class="summary-card">
+          <span>News Impact</span>
+          <strong id="newsImpactValue">Unknown</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="inspiration-strip reveal">
+      <a class="inspiration-card moss-card tilt-card utility-link-card" href="https://www.investing.com/news/forex-news" target="_blank" rel="noreferrer">
+        <div class="media-leaf media-news"></div>
+        <div class="inspiration-meta">
+          <span>تابع الأخبار العاجلة والمؤثرة على العملات</span>
+          <strong>Investing News</strong>
+        </div>
+      </a>
+      <a class="inspiration-card moss-card tilt-card utility-link-card" href="https://www.tradingview.com/chart/" target="_blank" rel="noreferrer">
+        <div class="media-leaf media-chart"></div>
+        <div class="inspiration-meta">
+          <span>افتح منصة الرسم والتحليل المتقدم مباشرة</span>
+          <strong>TradingView</strong>
+        </div>
+      </a>
+      <a class="inspiration-card moss-card tilt-card utility-link-card" href="https://www.forexfactory.com/calendar" target="_blank" rel="noreferrer">
+        <div class="media-leaf media-calendar"></div>
+        <div class="inspiration-meta">
+          <span>راجع مواعيد الأخبار القوية قبل أي صفقة</span>
+          <strong>Economic Calendar</strong>
+        </div>
+      </a>
+    </section>
+
+    <section class="control-bar reveal">
+      <div class="control-group">
+        <label>الأصل</label>
+        <select id="symbolSelect">
+          {% for symbol in symbols %}
+          <option value="{{ symbol }}">{{ symbol }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="control-group">
+        <label>الإطار الزمني</label>
+        <select id="timeframeSelect">
+          {% for interval in intervals %}
+          <option value="{{ interval }}" {% if interval == default_interval %}selected{% endif %}>{{ interval }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mode-pills" id="modePills">
+        {% for key, mode in modes.items() %}
+        <button class="mode-pill {% if key == 'SMART' %}active{% endif %}" data-mode="{{ key }}">{{ mode.label }}</button>
+        {% endfor %}
+      </div>
+      <button class="cta-button" id="analyzeButton">حلل الآن</button>
+    </section>
+
+    <section id="dashboardPage" class="page-section active">
+      <div class="dashboard-grid">
+        <section class="panel chart-panel reveal">
+          <div class="panel-header">
+            <div>
+              <div class="eyebrow">Live Chart</div>
+              <h3>مخطط السوق المباشر</h3>
+            </div>
+          </div>
+          <div id="tradingviewChart" class="tradingview-host"></div>
+        </section>
+
+        <aside class="panel side-panel reveal">
+          <div class="panel-header">
+            <div>
+              <div class="eyebrow">Instrument Brief</div>
+              <h3 id="overviewTitle">{{ default_symbol }}</h3>
+            </div>
+          </div>
+          <div class="overview-list">
+            <div><span>TradingView</span><strong id="overviewTradingView">FX:EURUSD</strong></div>
+            <div><span>Timeframe</span><strong id="overviewTimeframe">{{ default_interval }}</strong></div>
+            <div><span>Mode</span><strong id="overviewMode">Smart AI</strong></div>
+            <div><span>News Bias</span><strong id="overviewNewsBias">Neutral</strong></div>
+            <div><span>Upcoming Events</span><strong id="overviewEvents">0</strong></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="dashboard-grid lower-grid">
+        <section class="panel signal-panel reveal">
+          <div class="panel-header">
+            <div>
+              <div class="eyebrow">Strategy Output</div>
+              <h3>نتيجة التحليل</h3>
+            </div>
+          </div>
+          <div id="analysisState" class="placeholder-state">اختَر الأصل والاستراتيجية ثم اضغط "حلل الآن" لعرض التحليل.</div>
+          <div id="analysisContent" class="hidden"></div>
+        </section>
+
+        <section class="panel newsroom-panel reveal">
+          <div class="panel-header">
+            <div>
+              <div class="eyebrow">News Preview</div>
+              <h3>مكتب الأخبار</h3>
+            </div>
+          </div>
+          <div id="newsPreview" class="stack-list"></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="newsPage" class="page-section">
+      <div class="news-layout">
+        <section class="panel newsroom-panel reveal">
+          <div class="panel-header">
+            <div>
+              <div class="eyebrow">Market News</div>
+              <h3>الأخبار المؤثرة على الأصل</h3>
+            </div>
+          </div>
+          <div id="newsDeskList" class="stack-list"></div>
+        </section>
+        <section class="panel calendar-panel reveal">
+          <div class="panel-header">
+            <div>
+              <div class="eyebrow">Economic Calendar</div>
+              <h3>الأحداث الاقتصادية القادمة</h3>
+            </div>
+          </div>
+          <div id="eventDeskList" class="stack-list"></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="chartPage" class="page-section">
+      <section class="panel chart-page-panel reveal">
+        <div class="panel-header">
+          <div>
+            <div class="eyebrow">Immersive Chart</div>
+            <h3>وضع الشارت الكامل</h3>
+          </div>
+        </div>
+        <div id="fullTradingviewChart" class="tradingview-host large"></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    window.APP_CONFIG = {
+      bootstrapUrl: "{{ url_for('bootstrap') }}",
+      marketIntelUrl: "{{ url_for('market_intel') }}",
+      analyzeUrl: "{{ url_for('analyze') }}"
+    };
+  </script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
